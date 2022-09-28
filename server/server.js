@@ -1,5 +1,6 @@
-const app=require("./middleware/app")
+const app = require("./middleware/app");
 
-
-
-app.listen(4000,()=>{console.log("server ishladi");})
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, () => {
+   console.log(`server ishladi  ${PORT}`);
+});
