@@ -23,25 +23,40 @@ const registerUser = catchErrorAsync(async (req, res, next) => {
    jwtToken(user, 200, res);
 });
 
-
 const Login = catchErrorAsync(async (req, res, next) => {
-  const { email, password } = req.body;
+   const { email, password } = req.body;
 
-  if (!email || !password) {
-     return next(new AppError("siz email yoki passwordni kiritmadiz"));
-  }
+   if (!email || !password) {
+      return next(new AppError("siz email yoki passwordni kiritmadiz"));
+   }
 
-  const user = await userModel.findOne({ email });
+   const user = await userModel.findOne({ email });
 
-  if (!user) {
-     return next(new AppError("bunday user mavjud emas"));
-  }
+   if (!user) {
+      return next(new AppError("bunday user mavjud emas"));
+   }
 
-  const comparePassword = await bcrypt.compare(password, user.password);
-  if (!comparePassword) {
-     return next(new AppError("parol yoki email xato", 401));
-  }
-  jwtToken(user, 200, res);
+   const comparePassword = await bcrypt.compare(password, user.password);
+   if (!comparePassword) {
+      return next(new AppError("parol yoki email xato", 401));
+   }
+   jwtToken(user, 200, res);
 });
 
-module.exports = { registerUser,Login };
+const getAllUser = catchErrorAsync(async (req, res, next) => {
+   const keyword = req.query.search
+      ? {
+           $or: [
+              { name: { $regex: req.query.search, $options: "i" } },
+              { email: { $regex: req.query.search, $options: "i" } },
+           ],
+        }
+      : {};
+
+   const user = await userModel.find(keyword).find({ _id: { $ne: req.user._id } });
+   res.status(200).json({
+      user,
+   });
+});
+
+module.exports = { registerUser, Login, getAllUser };

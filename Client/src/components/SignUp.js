@@ -62,7 +62,7 @@ export const SignUp = () => {
       } else {
          toast({
             title: "Please select image",
-            description: "We've created your account for you.",
+            // description: "We've created your account for you.",
             status: "warning",
             duration: 5000,
             isClosable: true,
@@ -77,7 +77,7 @@ export const SignUp = () => {
       if (!name || !email || !password || !confirmPassword) {
          toast({
             title: "hamma ma`lumotlarni kiritmadingiz",
-            description: "We've created your account for you.",
+            // description: "We've created your account for you.",
             status: "warning",
             duration: 5000,
             isClosable: true,
@@ -89,7 +89,7 @@ export const SignUp = () => {
       if (password !== confirmPassword) {
          toast({
             title: "parollar bir hil emas",
-            description: "We've created your account for you.",
+            // description: "We've created your account for you.",
             status: "warning",
             duration: 5000,
             isClosable: true,
@@ -105,11 +105,12 @@ export const SignUp = () => {
             },
          };
 
-         const { data } = await axios.post(
+         const data = await axios.post(
             "http://localhost:4000/api/user/signup",
             { name, email, password, pic },
-            config
+            // config
          );
+         console.log(data, "bi dayayayyaaa");
          toast({
             title: "Siz ro`yhatdan o`tdingiz",
             description: "We've created your account for you.",
