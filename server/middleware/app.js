@@ -8,6 +8,7 @@ const cors = require("cors");
 require("colors");
 // require("dotenv").config();
 const userRouter = require("../router/userRouter");
+const chatRouter = require("../router/chatRoutes");
 
 const errorHandler = require("../controller/errorController");
 const DB = require("../connect/db");
@@ -18,6 +19,7 @@ app.use(express.json());
 app.use(CookieParser());
 app.use(cors());
 app.use("/api/user", userRouter);
+app.use("/api/chat", chatRouter);
 
 app.use(errorHandler);
 app.use("*", (req, res) => {
