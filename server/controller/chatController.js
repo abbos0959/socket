@@ -101,4 +101,72 @@ const createGroupChat = catchErrorAsync(async (req, res, next) => {
    }
 });
 
-module.exports = { accesChat, fetchChats, createGroupChat };
+const renameGroup = catchErrorAsync(async (req, res, next) => {
+   const { chatId, chatName } = req.body;
+   const updateChat = await chatModel
+      .findByIdAndUpdate(chatId, { chatName }, { new: true })
+      .populate("users", "-password")
+      .populate("groupAdmin", "-password");
+
+   if (!updateChat) {
+      return next(new AppError("bunday guruh mavjud emas", 404));
+   } else {
+      res.status(200).json(updateChat);
+   }
+});
+
+const addUserChat = catchErrorAsync(async (req, res, next) => {
+   const { chatId, userId } = req.body;
+
+   // const check = await chatModel.findById(chatId, { users: userId });
+   // if (check) {
+   //    return next(new AppError("bunday user chatda mavjud"));
+   // }
+
+   const added = await chatModel
+      .findByIdAndUpdate(
+         chatId,
+         {
+            $push: { users: userId },
+         },
+         { new: true }
+      )
+      .populate("users", "-password")
+      .populate("groupAdmin", "-password");
+
+   if (!added) {
+      return next(new AppError("bunday guruh mavjud emas", 404));
+   } else {
+      res.status(200).json(added);
+   }
+});
+
+const removeUserChat = catchErrorAsync(async (req, res, next) => {
+   const { chatId, userId } = req.body;
+
+   const removechatuser = await chatModel
+      .findByIdAndUpdate(
+         chatId,
+         {
+            $pull: { users: userId },
+         },
+         { new: true }
+      )
+      .populate("users", "-password")
+      .populate("groupAdmin", "-password");
+
+   if (!removechatuser) {
+      return next(new AppError("bunday chat mavjud emas"));
+   } else {
+      res.status(200).json(removechatuser);
+   }
+});
+
+module.exports = {
+   accesChat,
+   fetchChats,
+   createGroupChat,
+   renameGroup,
+   addUserChat,
+   removeUserChat,
+};
